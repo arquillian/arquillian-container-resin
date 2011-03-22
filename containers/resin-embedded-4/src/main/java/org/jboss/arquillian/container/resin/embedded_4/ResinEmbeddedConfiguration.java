@@ -65,11 +65,6 @@ public class ResinEmbeddedConfiguration implements ContainerConfiguration
       // TODO
    }
 
-   public ContainerProfile getContainerProfile()
-   {
-      return ContainerProfile.CLIENT;
-   }
-
    public int getBindHttpPort()
    {
       return bindHttpPort;

@@ -43,7 +43,6 @@
 package org.jboss.arquillian.container.resin.embedded_4;
 
 import org.jboss.arquillian.spi.ConfigurationException;
-import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 
 /**
@@ -62,7 +61,6 @@ public class ResinEmbeddedConfiguration implements ContainerConfiguration
 
    public void validate() throws ConfigurationException
    {
-      // TODO
    }
 
    public int getBindHttpPort()

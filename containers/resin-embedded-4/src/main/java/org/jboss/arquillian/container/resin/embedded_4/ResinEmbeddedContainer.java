@@ -78,7 +78,6 @@ import com.caucho.server.webapp.WebApp;
  * @author ales.justin@jboss.org
  * @version $Revision: $
  */
-@SuppressWarnings({"ResultOfMethodCallIgnored"})
 public class ResinEmbeddedContainer implements DeployableContainer<ResinEmbeddedConfiguration>
 {
    public static final String HTTP_PROTOCOL = "http";

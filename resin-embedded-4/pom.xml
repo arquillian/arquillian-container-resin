@@ -1,125 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <parent>
-      <groupId>org.jboss.arquillian.container</groupId>
-      <artifactId>arquillian-parent-resin</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+    <parent>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-parent-resin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-   <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-   <groupId>org.jboss.arquillian.container</groupId>
-   <artifactId>arquillian-resin-embedded-4</artifactId>
-   <name>Arquillian Container Resin Embedded 4</name>
-   <description>Resin4 Embedded container integration for the Arquillian project</description>
+    <artifactId>arquillian-resin-embedded-4</artifactId>
+    <name>Arquillian Container Resin Embedded 4</name>
+    <description>Resin4 Embedded container integration for the Arquillian project</description>
 
-   <properties>
-      <resin4.version>4.0.16</resin4.version>
-   </properties>
+    <properties>
+        <version.resin4>4.0.17</version.resin4>
+        <version.h2db>1.2.138</version.h2db>
+        <version.common_logging>1.1.1</version.common_logging>
+        <version.slf4j>1.6.1</version.slf4j>
+        <version.log4j>1.2.14</version.log4j>
+    </properties>
 
-   <repositories>
-      <repository>
-         <id>caucho</id>
-         <name>Caucho Maven Repository</name>
-         <url>http://caucho.com/m2/</url>
-         <layout>default</layout>
-         <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-         </releases>
-      </repository>
-   </repositories>
+    <repositories>
+        <repository>
+            <id>caucho</id>
+            <name>Caucho Maven Repository</name>
+            <url>http://caucho.com/m2/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </repository>
+    </repositories>
 
-   <dependencies>
+    <dependencies>
 
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-spi</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+        <!-- org.jboss.arquillian -->
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-ejb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-resource</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-initialcontext</artifactId>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.arquillian.protocol</groupId>
-         <artifactId>arquillian-protocol-servlet</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+        <!-- resin -->
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>resin</artifactId>
+            <version>${version.resin4}</version>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.arquillian.testenricher</groupId>
-         <artifactId>arquillian-testenricher-cdi</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+        <!-- end resin -->
 
-      <dependency>
-         <groupId>org.jboss.arquillian.testenricher</groupId>
-         <artifactId>arquillian-testenricher-resource</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-impl-base</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-junit</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.h2db}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
-      </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${version.common_logging}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>com.h2database</groupId>
-         <artifactId>h2</artifactId>
-         <version>1.2.138</version>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <!-- Logging -->
-      <dependency>
-         <groupId>commons-logging</groupId>
-         <artifactId>commons-logging</artifactId>
-         <version>1.1.1</version>
-	 <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${version.log4j}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-api</artifactId>
-         <version>1.6.1</version>
-	 <scope>test</scope>
-      </dependency>
+        <!-- end logging -->
 
-      <dependency>
-         <groupId>log4j</groupId>
-         <artifactId>log4j</artifactId>
-         <version>1.2.14</version>
-	 <scope>test</scope>
-      </dependency>
-
-      <!-- end logging -->
-
-
-      <!-- resin -->
-      <dependency>
-         <groupId>com.caucho</groupId>
-         <artifactId>resin</artifactId>
-         <version>${resin4.version}</version>
-	 <scope>provided</scope>
-      </dependency>
-
-      <!-- end resin -->
-
-   </dependencies>
+    </dependencies>
 </project>

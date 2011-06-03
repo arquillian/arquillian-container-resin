@@ -1,0 +1,106 @@
+
+   ARQUILLIAN + RESIN 4
+   ======================
+
+
+This is the Arquillian Plugin for the Resin Java EE 6 Web Profile Server
+by Caucho Technologies (http://www.caucho.com/)
+
+If you just want to use Arquillian together with Resin, please
+head over to http://www.caucho.com/arquillian/
+
+If you want to tweak the module, fix a bug or explore on how
+to script Resin, then this source code is the right place to start.
+
+The Arquillian Plugin for Resin comes in two fashions:
+ 1) Resin 4 as Embedded Server
+ 2) Resin 4 as Standalone Server (already running somewhere on your network)
+    (not yet available)
+
+
+To compile these Plugins, you have to setup your environment first.
+
+ Prerequisite conditions:
+ ------------------------
+ You need the following tools to be able to compile the Arquillian Plugin
+ for the Caucho Resin JavaEE Application Server
+ a) Oracle Java >= 1.6.0_25 ( Java SE 6 Update 25 )
+      As Maven, Arquillian and Resin are based on Java, you'll need this.
+      Get the JDK (Java Development Kit) from
+      http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+ b) Apache Maven 3
+      This is how the Plugins are built; get this from
+      http://maven.apache.org/download.html
+      and follow the setup instructions at the same page
+      http://maven.apache.org/download.html#Installation
+
+ c) Git
+      Git is the Sourceode Management System (SCM) used to develop
+      the Plugin. It is used by the Linux Kernel and a huge amount
+      of open source projects.
+      Get it at http://git-scm.com/download
+
+ d) Github Account (Optional)
+      If you plan to adjust the module and want your changes to be
+      integrated, you'll need a Github Account. A free Account
+      will do just fine, get it at
+      https://github.com/signup/free
+
+ Building the Plugin:
+ --------------------
+
+1. Create a workspace for Arquillian, e.g.
+    /home/yourUsername/work/resin
+
+   In Linux/MacOSX, open a shell and navigate to this directory by entering
+
+   cd /home/yourUsername/work/resin
+
+2. Checkout the Arquillian "Core" Module
+   git clone git://github.com/arquillian/arquillian-core.git
+
+3. Build the Arquillian BOM
+
+   1) Change to the correct directory
+        cd /home/yourUsername/work/resin/arquillian-core/bom/
+   2) Switch to the correct tag
+        git checkout 1.0.0.Beta1
+   3) Install the "BOM"
+        mvn clean compile install
+      (Note: This might take a while as "maven is downloading the internet" ;) )
+
+4. Checkout Caucho's Aruillian Repository
+
+    You have to differentiate here if you would like to adjust the source code of the
+    module (a) or just want to build it (b).
+
+    a) If you want to adjust the code and get your changes upstream, do the following:
+        Fork & Clone Caucho's Arquillian Repo
+            - Go to https://github.com/caucho/arquillian-container-resin
+            - Click the fork button on the top right of the page
+            - Clone your own fork by doing the following
+                cd /home/yourUsername/work/resin
+                git clone git@github.com:/yourGithubUsername/arquillian-container-resin
+                cd arquillian-container-resin
+            - continue with step 5
+    b) If you just want to build the module yourself
+        Clone Caucho's Arquillian Repo
+            cd /home/yourUsername/work/resin
+            git clone git://github.com/caucho/arquillian-container-resin.git
+            cd arquillian-container-resin
+
+5. Build the module
+    You should be in the directory
+        /home/yourUsername/work/resin/arquillian-container-resin
+    Now type to build and install the module
+        mvn clean compile install
+    As we're probably in the middle of a dvelopment cycle, your build might not
+    complete successfully, then you'll have to reset your codebase to a solid
+    state.
+    To get a list of all tagged states, type
+        git tag -l
+    Choose a tag by typing
+        git checkout <tagname>
+        e.g. git checkout 1.0.0.Beta1
+

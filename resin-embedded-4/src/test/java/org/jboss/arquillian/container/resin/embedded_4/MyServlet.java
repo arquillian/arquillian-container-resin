@@ -16,15 +16,29 @@
  */
 package org.jboss.arquillian.container.resin.embedded_4;
 
-import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-public class TestBean
+/**
+ * TestServlet
+ *
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @version $Revision: $
+ */
+public class MyServlet extends HttpServlet
 {
-   @Resource(name = "name")
-   private String name;
+   private static final long serialVersionUID = 1L;
 
-   public String getName()
+   public static final String URL_PATTERN = "/Test";
+
+   public static final String MESSAGE = "hello";
+
+   @Override
+   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
    {
-      return name;
+      response.getWriter().append(MESSAGE);
    }
 }

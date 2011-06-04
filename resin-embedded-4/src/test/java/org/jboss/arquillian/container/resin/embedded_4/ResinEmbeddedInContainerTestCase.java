@@ -80,7 +80,7 @@ public class ResinEmbeddedInContainerTestCase
    public static WebArchive getTestArchive()
    {
       final WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-         .addClass(TestBean.class)
+         .addClass(MyBean.class)
          .addAsWebInfResource("resin-env.xml", "resin-web.xml") // adds and renames resin-env.xml to resin-web.xml
          .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
          .setWebXML("in-container-web.xml");
@@ -105,7 +105,7 @@ public class ResinEmbeddedInContainerTestCase
    DataSource ds;
 
    @Inject
-   TestBean testBean;
+   MyBean testBean;
 
    @Test
    public void shouldBeAbleToInjectMembersIntoTestClass() throws Exception

@@ -57,7 +57,7 @@ public class ResinEmbeddedConfiguration implements ContainerConfiguration
 {
    private String bindAddress = "127.0.0.1";
    private String serverId = "arquillian";
-   private int bindHttpPort = 9090;
+   private int bindHttpPort = 8080;
 
    public void validate() throws ConfigurationException
    {

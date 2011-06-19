@@ -197,8 +197,11 @@ public class ResinEmbedded
          config.setArchivePath(new RawString(webApp.getArchivePath()));
    
        config.addBuilderProgram(new ArquillianWebAppProgram(webApp));
-   
+       
+       _host.addWebApp(config);
+       
        _host.getWebAppContainer().addWebApp(config);
+
     }
     finally
     {

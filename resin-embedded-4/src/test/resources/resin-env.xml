@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://caucho.com/ns/resin"
-       xmlns:resin="urn:java:com.caucho.resin">
+<web-app xmlns="http://caucho.com/ns/resin" xmlns:resin="urn:java:com.caucho.resin">
 
-    <env-entry env-entry-name='Embedded'
-       env-entry-type='boolean'
-       env-entry-value='true'/>
+    <env-entry>
+        <env-entry-name>Embedded</env-entry-name>
+        <env-entry-type>boolean</env-entry-type>
+        <env-entry-value>true</env-entry-value>
+    </env-entry>
 
-    <env-entry env-entry-name="version"
-               env-entry-type="java.lang.Integer"
-               env-entry-value="4" />
+    <env-entry>
+        <env-entry-name>version</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>4</env-entry-value>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>type</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>Embedded</env-entry-value>
+    </env-entry>
 
     <database>
         <jndi-name>jdbc/test</jndi-name>
@@ -23,45 +32,3 @@
     </database>
 
 </web-app>
-        <!--<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN"-->
-        <!--"http://www.eclipse.org/jetty/configure.dtd">-->
-        <!--<Configure id="webAppCtx" class="org.eclipse.jetty.webapp.WebAppContext">-->
-        <!--&lt;!&ndash; Third argument to EnvEntry constructor (overrideWebXml) required for Jetty <= 6.1.14 &ndash;&gt;-->
-        <!--&lt;!&ndash; EnvEntry scope not implemented until Jetty 6.1.12 &ndash;&gt;-->
-        <!--<New class="org.eclipse.jetty.plus.jndi.EnvEntry">-->
-        <!--<Arg><Ref id="webAppCtx"/></Arg>-->
-        <!--<Arg>type</Arg>-->
-        <!--<Arg type="java.lang.String">Embedded</Arg>-->
-        <!--<Arg type="boolean">true</Arg>-->
-        <!--</New>-->
-        <!--<New class="org.eclipse.jetty.plus.jndi.EnvEntry">-->
-        <!--<Arg>version</Arg>-->
-        <!--<Arg type="java.lang.Integer">6</Arg>-->
-        <!--<Arg type="boolean">true</Arg>-->
-        <!--</New>-->
-        <!--&lt;!&ndash; I can't figure out why org.eclipse.jetty.plus.jndi.Resource doesn't work here, but it doesn't &ndash;&gt;-->
-        <!--<New class="org.eclipse.jetty.plus.jndi.EnvEntry">-->
-        <!--<Arg><Ref id="webAppCtx"/></Arg>-->
-        <!--<Arg>BeanManager</Arg>-->
-        <!--<Arg>-->
-        <!--<New class="javax.naming.Reference">-->
-        <!--<Arg>javax.enterprise.inject.spi.BeanManager</Arg>-->
-        <!--<Arg>org.jboss.weld.resources.ManagerObjectFactory</Arg>-->
-        <!--<Arg/>-->
-        <!--</New>-->
-        <!--</Arg>-->
-        <!--<Arg type="boolean">true</Arg>-->
-        <!--</New>-->
-        <!--<New class="org.eclipse.jetty.plus.jndi.EnvEntry">-->
-        <!--<Arg><Ref id="webAppCtx"/></Arg>-->
-        <!--<Arg>jdbc/test</Arg>-->
-        <!--<Arg>-->
-        <!--<New class="org.h2.jdbcx.JdbcDataSource">-->
-        <!--<Set name="URL">jdbc:h2:mem:test</Set>-->
-        <!--<Set name="user">sa</Set>-->
-        <!--<Set name="password">sa</Set>-->
-        <!--</New>  -->
-        <!--</Arg>-->
-        <!--<Arg type="boolean">true</Arg>-->
-        <!--</New>-->
-        <!--</Configure>-->

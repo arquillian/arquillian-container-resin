@@ -16,7 +16,7 @@
     <description>Resin4 Embedded container integration for the Arquillian project</description>
 
     <properties>
-        <version.resin4>4.0.17</version.resin4>
+        <version.resin4>4.0.19</version.resin4>
         <version.h2db>1.2.138</version.h2db>
         <version.common_logging>1.1.1</version.common_logging>
         <version.slf4j>1.6.1</version.slf4j>

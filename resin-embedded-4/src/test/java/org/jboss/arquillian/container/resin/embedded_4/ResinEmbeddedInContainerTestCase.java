@@ -89,8 +89,8 @@ public class ResinEmbeddedInContainerTestCase
       return war;
    }
 
-   // defined in resin-env.xml, scoped to global
-   @Resource(mappedName = "version")
+   // defined in resin-env.xml
+   @Resource(mappedName = "java:comp/env/version")
    Integer version;
 
    // defined in web.xml, scoped to webapp (relative to java:comp/env)

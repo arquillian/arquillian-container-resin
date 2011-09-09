@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jboss.arquillian.container</groupId>
@@ -13,10 +12,10 @@
 
     <artifactId>arquillian-resin-embedded-4</artifactId>
     <name>Arquillian Container Resin Embedded 4</name>
-    <description>Resin4 Embedded container integration for the Arquillian project</description>
+    <description>Resin 4 Embedded container integration for the Arquillian project</description>
 
     <properties>
-        <version.resin4>4.0.19</version.resin4>
+        <version.resin4>4.0-SNAPSHOT</version.resin4>
         <version.h2db>1.2.138</version.h2db>
         <version.common_logging>1.1.1</version.common_logging>
         <version.slf4j>1.6.1</version.slf4j>
@@ -27,12 +26,38 @@
         <repository>
             <id>caucho</id>
             <name>Caucho Maven Repository</name>
-            <url>http://caucho.com/m2/</url>
+            <url>http://caucho.com/m2</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
             </releases>
+            <snapshots>
+              <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>caucho-snapshot</id>
+            <name>Caucho Maven Snapshot Repository</name>
+            <url>http://caucho.com/m2-snapshot/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+           </snapshots>
         </repository>
     </repositories>
 
@@ -76,21 +101,17 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- end resin -->
-
         <!-- Testing -->
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -105,22 +126,18 @@
             <version>${version.common_logging}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${version.slf4j}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${version.log4j}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- end logging -->
 
     </dependencies>
 </project>

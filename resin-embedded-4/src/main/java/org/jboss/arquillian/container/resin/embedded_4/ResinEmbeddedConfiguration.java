@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998-2010 Caucho Technology -- all rights reserved
+ * Copyright (c) 1998-2011 Caucho Technology -- all rights reserved
  *
  * This file is part of Resin(R) Open Source
  *
@@ -46,50 +46,55 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 /**
- * A {@link org.jboss.arquillian.spi.client.container.ContainerConfiguration} implementation for
- * the Resin4 Embedded container.
- *
- * @author Dominik Dorn
- * @author ales.justin@jboss.org
+ * Resin 4 embedded container configuration.
+ * 
+ * @author Reza Rahman
  * @version $Revision: $
  */
-public class ResinEmbeddedConfiguration implements ContainerConfiguration
-{
-   private String bindAddress = "127.0.0.1";
-   private String serverId = "arquillian";
-   private int bindHttpPort = 8080;
+public class ResinEmbeddedConfiguration implements ContainerConfiguration {
+  private int httpPort = 8086;
+  private String configurationFile;
 
-   public void validate() throws ConfigurationException
-   {
-   }
+  /**
+   * @see ContainerConfiguration#validate()
+   */
+  @Override
+  public void validate() throws ConfigurationException
+  {
+    // Nothing to validate.
+  }
 
-   public int getBindHttpPort()
-   {
-      return bindHttpPort;
-   }
+  /**
+   * HTTP port embedded Resin listens on, default 8086.
+   */
+  public int getHttpPort()
+  {
+    return httpPort;
+  }
 
-   public void setBindHttpPort(int bindHttpPort)
-   {
-      this.bindHttpPort = bindHttpPort;
-   }
+  /**
+   * HTTP port embedded Resin listens on, default 8086.
+   */
+  public void setHttpPort(int httpPort)
+  {
+    this.httpPort = httpPort;
+  }
 
-   public String getBindAddress()
-   {
-      return bindAddress;
-   }
+  /**
+   * Location of Resin configuration file (resin.xml), a minimal internal one
+   * used by default.
+   */
+  public String getConfigurationFile()
+  {
+    return configurationFile;
+  }
 
-   public void setBindAddress(String bindAddress)
-   {
-      this.bindAddress = bindAddress;
-   }
-
-   public String getServerId()
-   {
-      return serverId;
-   }
-
-   public void setServerId(String serverId)
-   {
-      this.serverId = serverId;
-   }
+  /**
+   * Location of Resin configuration file (resin.xml), a minimal internal one
+   * used by default.
+   */
+  public void setConfigurationFile(String configurationFile)
+  {
+    this.configurationFile = configurationFile;
+  }
 }

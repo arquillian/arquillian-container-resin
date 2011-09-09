@@ -81,11 +81,11 @@ public class ResinEmbeddedInContainer2TestCase
    {
       final WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
          .addClass(MyBean.class)
-         .addAsWebInfResource("resin-env.xml", "resin-web.xml") // adds and renames resin-env.xml to resin-web.xml
+         .addAsWebInfResource("resin-env.xml", "resin-web.xml")
          .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
          .setWebXML("in-container-web.xml");
-       log.info("created war file: ");
-       log.info(war.toString(true));
+      log.info("Created war file: " + war.getName());
+      log.fine(war.toString(true));
       return war;
    }
 

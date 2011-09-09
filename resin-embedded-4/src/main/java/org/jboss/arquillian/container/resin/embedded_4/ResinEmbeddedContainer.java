@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998-2010 Caucho Technology -- all rights reserved
+ * Copyright (c) 1998-2011 Caucho Technology -- all rights reserved
  *
  * This file is part of Resin(R) Open Source
  *
@@ -43,7 +43,6 @@
  */
 package org.jboss.arquillian.container.resin.embedded_4;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -67,185 +66,257 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import com.caucho.resin.HttpEmbed;
+import com.caucho.resin.ResinEmbed;
 import com.caucho.resin.WebAppEmbed;
 import com.caucho.server.dispatch.ServletManager;
 import com.caucho.server.webapp.WebApp;
 
 /**
- * <p>Resin4 Embedded container for the Arquillian project.</p>
- *
- * @author Dominik Dorn
- * @author ales.justin@jboss.org
+ * Resin 4 embedded container adapter for Arquillian.
+ * 
+ * @author Reza Rahman
  * @version $Revision: $
  */
-public class ResinEmbeddedContainer implements DeployableContainer<ResinEmbeddedConfiguration>
-{
-   public static final String HTTP_PROTOCOL = "http";
+public class ResinEmbeddedContainer implements
+    DeployableContainer<ResinEmbeddedConfiguration> {
+  
+  private static final Logger log = 
+    Logger.getLogger(ResinEmbeddedContainer.class.getName());
 
-   private static final Logger log = Logger.getLogger(ResinEmbeddedContainer.class.getName());
+  private ResinEmbed _resin;
+  private ResinEmbeddedConfiguration _configuration;
 
-   private ResinEmbedded server;
+  private File _workingDirectory;
 
-   private ResinEmbeddedConfiguration containerConfig;
+  @Inject
+  @DeploymentScoped
+  private InstanceProducer<WebAppEmbed> _webApplicationProducer;
 
-   private File base;
+  /**
+   * @see DeployableContainer#getConfigurationClass()
+   */
+  @Override
+  public Class<ResinEmbeddedConfiguration> getConfigurationClass()
+  {
+    return ResinEmbeddedConfiguration.class;
+  }
 
-   @Inject @DeploymentScoped
-   private InstanceProducer<WebAppEmbed> webAppEmbeddProducer;
-   
-   public Class<ResinEmbeddedConfiguration> getConfigurationClass()
-   {
-      return ResinEmbeddedConfiguration.class;
-   }
+  /**
+   * @see DeployableContainer#getDefaultProtocol()
+   */
+  @Override
+  public ProtocolDescription getDefaultProtocol()
+  {
+    return new ProtocolDescription("Servlet 3.0");
+  }
 
-   public ProtocolDescription getDefaultProtocol()
-   {
-      return new ProtocolDescription("Servlet 3.0");
-   }
+  /**
+   * @see DeployableContainer#setup(org.jboss.arquillian.container.spi.client.container.ContainerConfiguration)
+   */
+  @Override
+  public void setup(ResinEmbeddedConfiguration configuration)
+  {
+    _configuration = configuration;
+  }
 
-   public void setup(ResinEmbeddedConfiguration configuration)
-   {
-      containerConfig = configuration;
-   }
+  /**
+   * @see DeployableContainer#start()
+   */
+  @Override
+  public void start() 
+    throws LifecycleException
+  {
+    try {
+      createWorkingDirectory();
+    }
+    catch (Exception e) {
+      throw new LifecycleException("Failed to create temporary directory for Resin 4 embedded container.",e);
+    }
 
-   public void start() throws LifecycleException
-   {
-      try
-      {
-         base = createTempFolder();
-
-         server = new ResinEmbedded();
-         server.setRootDirectory(base.getAbsolutePath());
-         server.setPort(new HttpEmbed(containerConfig.getBindHttpPort()));
-         server.start();
-         
+    try {
+      if (_configuration.getConfigurationFile() == null) {
+        _resin = new ResinEmbed();
+      } else {
+        _resin = new ResinEmbed(_configuration.getConfigurationFile());
       }
-      catch (Exception e)
-      {
-         throw new LifecycleException("Could not create Resin4 container", e);
+        
+      _resin.setRootDirectory(_workingDirectory.getAbsolutePath());
+      _resin.addPort(new HttpEmbed(_configuration.getHttpPort()));
+  
+      log.info(String.format("Starting Resin 4 embedded container [%s] from working directory %s.",  _resin.hashCode(), _workingDirectory.getAbsolutePath()));
+      
+      _resin.start();
+    } catch (Exception e) {
+      throw new LifecycleException(String.format("Failed to start Resin 4 embedded container [%s].", _resin.hashCode()), e);
+    }
+  }
+
+  /**
+   * @see DeployableContainer#stop()
+   */
+  @Override
+  public void stop() 
+    throws LifecycleException
+  {
+    log.info(String.format("Stopping Resin 4 embedded container [%s].", _resin.hashCode()));
+
+    try {
+      _resin.stop();
+      _resin.destroy();
+    } catch (Exception e) {
+      throw new LifecycleException(String.format("Failed to stop Resin 4 embedded container [%s].", _resin.hashCode()), e);
+    }
+    
+    try {
+      removeWorkingDirectory();
+    } catch (IOException e) {
+      throw new LifecycleException(String.format("Failed to remove temporary directory %s for Resin 4 embedded container [%s].", _workingDirectory.getAbsolutePath(), _resin.hashCode()), e);
+    }
+  }
+
+  /**
+   * @see DeployableContainer#deploy(Archive)
+   */
+  @Override
+  public ProtocolMetaData deploy(Archive<?> archive) 
+    throws DeploymentException
+  {
+    try {
+      log.info(String.format("Deploying web archive %s to Resin 4 embedded container [%s].", archive.getName(), _resin.hashCode()));
+
+      // Resin needs an explicit context path.
+      String contextPath = getContextPath(archive);
+
+      // Resin needs a directory to explode .war contents to.
+      File deploymentDirectory = createDeploymentDirectory(contextPath);
+
+      // The .war must be written out to the file system for Resin.
+      File warFile = new File(_workingDirectory, archive.getName());
+      if (warFile.exists()) {
+        warFile.delete();
       }
-   }
 
-   public void stop() throws LifecycleException
-   {
-      try
-      {
-         log.info("Destroying Resin Embedded Server [id:" + server.hashCode() + "]");
-         server.stop();
-         server.destroy();
+      ZipExporter exporter = archive.as(ZipExporter.class);
+      exporter.exportTo(warFile.getAbsoluteFile());
 
-         deleteRecursively(base);
+      WebAppEmbed webApplication = new WebAppEmbed();
+      webApplication.setRootDirectory(deploymentDirectory.getAbsolutePath());
+      webApplication.setArchivePath(warFile.getAbsolutePath());
+      webApplication.setContextPath(contextPath);
+
+      _resin.addWebApp(webApplication);
+
+      _webApplicationProducer.set(webApplication);
+
+      // Creating meta-data for Arquillian.
+      HTTPContext httpContext = new HTTPContext("localhost", _configuration.getHttpPort());
+      
+      WebApp deployedWebApplication = webApplication.getWebApp();
+      ServletManager servletManager = deployedWebApplication.getServletMapper().getServletManager();
+      Map<String, ? extends ServletConfig> servlets = servletManager.getServlets();
+
+      for (String name : servlets.keySet()) {
+        ServletConfig servetConfiguration = servlets.get(name);
+        httpContext.add(new Servlet(name, servetConfiguration.getServletContext().getContextPath()));
       }
-      catch (Exception e)
-      {
-         throw new LifecycleException("Could not destroy Resin4 container", e);
-      }
-   }
 
-   public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
-   {
-      try
-      {
-         File deploymentBase = createTempFolder(base);
-         File warFile = new File(deploymentBase, archive.getName());
-         if (warFile.exists())
-            warFile.delete();
+      return new ProtocolMetaData().addContext(httpContext);
+    } catch (Exception e) {
+      throw new DeploymentException(String.format("Failed to deploy web archive %s to Resin 4 embedded container [%s].", archive.getName(), _resin.hashCode()), e);
+    }
+  }
 
-         log.finer("Web archive = " + archive.getName());
-         ZipExporter exporter = archive.as(ZipExporter.class);
-         exporter.exportTo(warFile.getAbsoluteFile());
+  /**
+   * @see DeployableContainer#undeploy(Archive)
+   */
+  public void undeploy(Archive<?> archive) 
+    throws DeploymentException
+  {
+    log.info(String.format("Undeploying web archive %s from Resin 4 embedded container [%s].", archive.getName(), _resin.hashCode()));
 
-         WebAppEmbed webApp = new WebAppEmbed();
-         webApp.setRootDirectory(deploymentBase.getAbsolutePath());
-         webApp.setArchivePath(warFile.getAbsolutePath());
-         webApp.setContextPath(createContextPath(archive));
+    try {
+      _resin.removeWebApp(_webApplicationProducer.get());
+    } catch (RuntimeException e) {
+      throw new DeploymentException(String.format("Failed to undeploy web archive %s to Resin 4 embedded container [%s].", archive.getName(), _resin.hashCode()), e);
+    }
+  }
 
-         log.info("Adding webapp to server: " + webApp);
-         server.addWebApp(webApp);
-         
-         webAppEmbeddProducer.set(webApp);
-         
-         HTTPContext httpContext = new HTTPContext(containerConfig.getBindAddress(), containerConfig.getBindHttpPort());
-         WebApp wa = webApp.getWebApp();
-         ServletManager servletManager = wa.getServletMapper().getServletManager();
-         Map<String, ? extends ServletConfig> servlets = servletManager.getServlets();
-         for (String name : servlets.keySet())
-         {
-            ServletConfig sc = servlets.get(name);
-            httpContext.add(new Servlet(name, sc.getServletContext().getContextPath()));
-         }
-         return new ProtocolMetaData().addContext(httpContext);
-      }
-      catch (Exception e)
-      {
-         throw new DeploymentException("Could not deploy " + archive.getName(), e);
-      }
-   }
+  /**
+   * @see DeployableContainer#deploy(Descriptor)
+   */
+  @Override
+  public void deploy(Descriptor descriptor) throws DeploymentException
+  {
+    throw new UnsupportedOperationException("Resin does not support resource files. Please use resin.xml, web.xml, resin-web.xml, beans.xml or resin-beans.xml to deploy resources.");
+  }
 
-   public void undeploy(Archive<?> archive) throws DeploymentException
-   {
-      webAppEmbeddProducer.get().getWebApp().destroy();
-   }
+  /**
+   * @see DeployableContainer#undeploy(Descriptor)
+   */
+  @Override
+  public void undeploy(Descriptor descriptor) throws DeploymentException
+  {
+    throw new UnsupportedOperationException("Resin does not support resource files. Please use resin.xml, web.xml, resin-web.xml, beans.xml or resin-beans.xml to deploy resources.");
+  }
 
-   public void deploy(Descriptor descriptor) throws DeploymentException
-   {
-      // TODO
-   }
+  private void createWorkingDirectory() throws IOException
+  {
+    _workingDirectory = new File("resin-work-" + UUID.randomUUID().toString()); //File.createTempFile("arquillian", "resin");
 
-   public void undeploy(Descriptor descriptor) throws DeploymentException
-   {
-      // TODO
-   }
+    _workingDirectory.delete();
+    _workingDirectory.mkdirs();
+  }
 
-   /*
-    * Internal Helpers
-    */
-   
-   static void deleteRecursively(File file) throws IOException
-   {
-      if (file.isDirectory())
-         deleteDirectoryContents(file);
+  private void removeWorkingDirectory() throws IOException
+  {
+    deleteFile(_workingDirectory);
+  }
 
-      if (file.delete() == false)
-      {
-         throw new IOException("Failed to delete " + file);
-      }
-   }
+  private static void deleteFile(File file) throws IOException
+  {
+    if (file.isDirectory()) {
+      deleteDirectory(file);
+    }
 
-   static void deleteDirectoryContents(File directory) throws IOException
-   {
-      File[] files = directory.listFiles();
-      if (files == null)
-         throw new IOException("Error listing files for " + directory);
+    if (file.delete() == false) {
+      throw new IOException("Failed to delete " + file);
+    }
+  }
 
-      for (File file : files)
-      {
-         deleteRecursively(file);
-      }
-   }
-   
-   static File createTempFolder() throws Exception
-   {
-      File tmpFile = File.createTempFile("arquillian", "resin");
-      tmpFile.delete();
-      tmpFile.mkdirs();
-      return tmpFile;
-   }
+  private static void deleteDirectory(File directory) throws IOException
+  {
+    File[] files = directory.listFiles();
 
-   static File createTempFolder(File parent) throws Exception
-   {
-      File tmpFile = new File(parent, UUID.randomUUID().toString());
-      tmpFile.mkdirs();
-      return tmpFile;
-   }
-   
-   static String createContextPath(Archive<?> archive)
-   {
-      String name = archive.getName();
-      if(name.contains("."))
-      {
-         name = name.substring(0, name.indexOf("."));
-      }
-      return "/" + name;
-   }
+    if (files == null) {
+      throw new IOException("Error listing files for " + directory);
+    }
+
+    for (File file : files) {
+      deleteFile(file);
+    }
+  }
+
+  private File createDeploymentDirectory(String contextPath)
+  {
+    File deploymentDirectory = new File(_workingDirectory,
+                                        String.format("%s.%s", 
+                                                      contextPath.substring(1),
+                                                      UUID.randomUUID()));
+
+    deploymentDirectory.mkdirs();
+
+    return deploymentDirectory;
+  }
+
+  private static String getContextPath(Archive<?> archive)
+  {
+    String name = archive.getName();
+
+    // Strip file extension.
+    if (name.contains(".")) {
+      name = name.substring(0, name.lastIndexOf("."));
+    }
+
+    return "/" + name;
+  }
 }

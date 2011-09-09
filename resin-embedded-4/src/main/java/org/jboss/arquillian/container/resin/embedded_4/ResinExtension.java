@@ -21,17 +21,19 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * ResinExtension
- *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * Embedded Resin 4 extension for Arquillian.
+ * 
+ * @author Reza Rahman
  * @version $Revision: $
  */
-public class ResinExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(DeployableContainer.class, ResinEmbeddedContainer.class);
-   }
+public class ResinExtension implements LoadableExtension {
 
+  /**
+   * @see LoadableExtension#register(org.jboss.arquillian.core.spi.LoadableExtension.ExtensionBuilder)
+   */
+  @Override
+  public void register(ExtensionBuilder builder)
+  {
+    builder.service(DeployableContainer.class, ResinEmbeddedContainer.class);
+  }
 }

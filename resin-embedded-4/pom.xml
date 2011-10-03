@@ -15,7 +15,7 @@
     <description>Resin 4 Embedded container integration for the Arquillian project</description>
 
     <properties>
-        <version.resin4>4.0-SNAPSHOT</version.resin4>
+        <version.resin4>4.0.23</version.resin4>
         <version.h2db>1.2.138</version.h2db>
         <version.common_logging>1.1.1</version.common_logging>
         <version.slf4j>1.6.1</version.slf4j>
@@ -26,26 +26,12 @@
         <repository>
             <id>caucho</id>
             <name>Caucho Maven Repository</name>
-            <url>http://caucho.com/m2</url>
+            <url>http://caucho.com/m2/</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
-            <snapshots>
-              <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>caucho-snapshot</id>
-            <name>Caucho Maven Snapshot Repository</name>
-            <url>http://caucho.com/m2-snapshot/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-              <enabled>true</enabled>
-            </snapshots>
         </repository>
         <repository>
             <id>jboss-public-repository-group</id>

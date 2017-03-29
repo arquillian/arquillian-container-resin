@@ -1,4 +1,4 @@
- ARQUILLIAN + RESIN 4
+ ARQUILLIAN RESIN 4 CONTAINER ADAPTER
  ====================
 
 This is the Arquillian Plugin for the Resin 4 Java EE 6 server 
